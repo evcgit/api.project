@@ -1,26 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
+
+  if (!token) {
+    alert('You must be logged in to view this page');
+    window.location.href = '/';
+    return;
+  }
+
   fetch('/cards', {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     }
   })
   .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json();
+		if (response.status === 401) {
+			alert('You must be logged in to view this page');
+			window.location.href = '/';
+			throw new Error('Unauthorized');
+		}
+		return response.json();
+	})
+  .then(data => {
+    const cardsContainer = document.getElementById('cardsContainer');
+    cardsContainer.innerHTML = data.map(card => `<div>${card.name}</div>`).join('');
   })
-  .then(cards => {
-    const cardList = document.getElementById('card-list');
-    cards.forEach(card => {
-      const listItem = document.createElement('li');
-      listItem.textContent = card.name;
-      cardList.appendChild(listItem);
-    });
-  })
-  .catch(error => {
-    console.error('Error fetching cards:', error);
+  .catch(err => {
+    console.error('Error fetching cards:', err);
   });
 });
+

@@ -19,30 +19,8 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
       document.getElementById('message').innerText = 'You are logged in';
       localStorage.setItem('token', data.token);
 			console.log('Token stored in local storage');
-      
-
-			fetch('/cards', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.text();
-      })
-      .then(html => {
-        document.open();
-        document.write(html);
-        document.close();
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('message').innerText = 'Failed to load cards';
-      });
-    }
+			window.location = '/cards.html';
+		}
   })
   .catch((err) => {
     console.error('Error:', err);
