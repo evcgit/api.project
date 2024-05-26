@@ -11,8 +11,8 @@ const PORT = 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
 const usersData = fs.readFileSync('./data/users.json');
 const users = JSON.parse(usersData).users;
-// const cardsData = fs.readFileSync('./data/cards.json');
-// const cards = JSON.parse(cardsData).cards;
+const cardsData = fs.readFileSync('./data/cards.json');
+let cards = JSON.parse(cardsData).cards;
 
 app.use(express.json());
 app.use(express.static('./public'));
@@ -26,7 +26,7 @@ app.use(expressjwt({
     }
     return null;
   },
-}).unless({ path: ['/', '/login', '/index.html'] }));
+}).unless({ path: ['/', '/login', '/index.html', '/public', '/favicon.ico'] }));
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
@@ -35,6 +35,9 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
+
+
+
 
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -52,8 +55,19 @@ app.post('/login', async (req, res) => {
   };
 
   const token = jwt.sign({ sub: user.id, username: user.username }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '1h' });
-  console.log('login successful');
+  console.log('login successful, token generated');
   return res.json({ token: token });
+});
+
+
+
+
+
+
+app.get('/cards', (req, res) => {
+	const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+  console.log('Token received:', token);
+	res.sendFile(__dirname + '/public/cards.html');
 });
 
 app.use((err, req, res, next) => {

@@ -18,7 +18,30 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
     else {
       document.getElementById('message').innerText = 'You are logged in';
       localStorage.setItem('token', data.token);
-      // window.location.href = '/cards'
+			console.log('Token stored in local storage');
+      
+
+			fetch('/cards', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .then(html => {
+        document.open();
+        document.write(html);
+        document.close();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('message').innerText = 'Failed to load cards';
+      });
     }
   })
   .catch((err) => {
