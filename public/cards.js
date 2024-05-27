@@ -7,11 +7,26 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  fetch('/cards', {
+	function getQueryParams() {
+    const params = {};
+    const queryString = window.location.search.substring(1);
+    const queryArray = queryString.split('&');
+    queryArray.forEach(param => {
+      const [key, value] = param.split('=');
+      params[decodeURIComponent(key)] = decodeURIComponent(value);
+    });
+    return params;
+  }
+
+  const queryParams = getQueryParams();
+  const queryString = new URLSearchParams(queryParams).toString();
+
+  fetch(`/cards-data?${queryString}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+			'Accept': 'application/json'
     }
   })
   .then(response => {

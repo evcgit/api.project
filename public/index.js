@@ -16,10 +16,9 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
       document.getElementById('message').innerText = data.errorMessage;
     }
     else {
-      document.getElementById('message').innerText = 'You are logged in';
       localStorage.setItem('token', data.token);
 			console.log('Token stored in local storage');
-			window.location = '/cards.html';
+			window.location.href = '/cards.html';
 		}
   })
   .catch((err) => {
